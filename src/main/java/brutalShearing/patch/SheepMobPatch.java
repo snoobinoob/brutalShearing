@@ -13,8 +13,7 @@ import necesse.level.maps.Level;
 import net.bytebuddy.asm.Advice;
 
 public class SheepMobPatch {
-    @ModMethodPatch(target = Mob.class, name = "isHit",
-            arguments = {MobWasHitEvent.class, Attacker.class})
+    @ModMethodPatch(target = Mob.class, name = "isHit", arguments = {MobWasHitEvent.class, Attacker.class})
     public static class isHitPatch {
         @Advice.OnMethodEnter(skipOn = Advice.OnNonDefaultValue.class)
         public static boolean onEnter(@Advice.This Mob mob, @Advice.Argument(1) Attacker attacker) {
@@ -23,14 +22,14 @@ public class SheepMobPatch {
             }
 
             SheepMob sheep = (SheepMob) mob;
-            if (!(sheep.isGrown() && sheep.hasWool())) {
+            if (!sheep.canShear(null)) {
                 return false;
             }
 
             ArrayList<InventoryItem> products = new ArrayList<>();
             sheep.onShear(null, products);
             Level mobLevel = sheep.getLevel();
-            if (mobLevel.isServerLevel()) {
+            if (mobLevel.isServer()) {
                 for (InventoryItem product : products) {
                     PickupEntity pickup = product.getPickupEntity(mobLevel, mob.x, mob.y);
                     mobLevel.entityManager.pickups.add(pickup);
