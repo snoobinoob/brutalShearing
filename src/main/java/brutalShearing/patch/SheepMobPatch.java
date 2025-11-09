@@ -6,7 +6,7 @@ import necesse.entity.mobs.Attacker;
 import necesse.entity.mobs.Mob;
 import necesse.entity.mobs.MobWasHitEvent;
 import necesse.entity.mobs.PlayerMob;
-import necesse.entity.mobs.friendly.SheepMob;
+import necesse.entity.mobs.friendly.HusbandryMob;
 import necesse.entity.pickup.PickupEntity;
 import necesse.inventory.InventoryItem;
 import necesse.level.maps.Level;
@@ -17,18 +17,18 @@ public class SheepMobPatch {
     public static class isHitPatch {
         @Advice.OnMethodEnter(skipOn = Advice.OnNonDefaultValue.class)
         public static boolean onEnter(@Advice.This Mob mob, @Advice.Argument(1) Attacker attacker) {
-            if (!(mob instanceof SheepMob && attacker.getAttackOwner() instanceof PlayerMob)) {
+            if (!(mob instanceof HusbandryMob && attacker.getAttackOwner() instanceof PlayerMob)) {
                 return false;
             }
 
-            SheepMob sheep = (SheepMob) mob;
-            if (!sheep.canShear(null)) {
+            HusbandryMob husbandryMob = (HusbandryMob) mob;
+            if (!husbandryMob.canShear(null)) {
                 return false;
             }
 
             ArrayList<InventoryItem> products = new ArrayList<>();
-            sheep.onShear(null, products);
-            Level mobLevel = sheep.getLevel();
+            husbandryMob.onShear(null, products);
+            Level mobLevel = husbandryMob.getLevel();
             if (mobLevel.isServer()) {
                 for (InventoryItem product : products) {
                     PickupEntity pickup = product.getPickupEntity(mobLevel, mob.x, mob.y);
